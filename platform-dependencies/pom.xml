@@ -14,7 +14,7 @@
   <description>Manages versions of third-party libraries used by GeoTools</description>
 
   <properties>
-    <batik.version>1.18</batik.version>
+    <batik.version>1.19</batik.version>
     <clickhouse-jdbc.version>0.6.4</clickhouse-jdbc.version>
     <commons-beanutils.version>1.11.0</commons-beanutils.version>
     <commons-cli.version>1.4</commons-cli.version>
