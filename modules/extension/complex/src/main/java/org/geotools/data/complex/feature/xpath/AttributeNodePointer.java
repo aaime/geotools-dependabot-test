@@ -1,0 +1,131 @@
+/*
+ *    GeoTools - The Open Source Java GIS Toolkit
+ *    http://geotools.org
+ *
+ *    (C) 2007-2011, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+
+package org.geotools.data.complex.feature.xpath;
+
+import java.io.Serial;
+import org.apache.commons.jxpath.ri.Compiler;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
+import org.apache.commons.jxpath.ri.model.NodeIterator;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.geotools.api.feature.Attribute;
+import org.geotools.api.feature.ComplexAttribute;
+import org.geotools.data.complex.util.ComplexFeatureConstants;
+import org.geotools.feature.type.Types;
+
+/**
+ * Special node pointer for {@link org.geotools.feature.Feature}.
+ *
+ * @author Justin Deoliveira (The Open Planning Project)
+ * @author Gabriel Roldan (Axios Engineering)
+ */
+public class AttributeNodePointer extends NodePointer {
+
+    /** */
+    @Serial
+    private static final long serialVersionUID = -5637103253645991273L;
+
+    /** The name of hte node. */
+    QName name;
+
+    /** The underlying feature */
+    Attribute feature;
+
+    protected AttributeNodePointer(NodePointer parent, Attribute feature, QName name) {
+        super(parent);
+        this.name = name;
+        this.feature = feature;
+    }
+
+    @Override
+    public boolean isLeaf() {
+        return !(feature instanceof ComplexAttribute);
+    }
+
+    @Override
+    public boolean isCollection() {
+        return false;
+    }
+
+    @Override
+    public int getLength() {
+        return 1;
+    }
+
+    @Override
+    public QName getName() {
+        return name;
+    }
+
+    @Override
+    public Object getBaseValue() {
+        return null;
+    }
+
+    @Override
+    public Object getImmediateNode() {
+        return ComplexFeatureConstants.unpack(feature);
+    }
+
+    public Attribute getImmediateAttribute() {
+        return feature;
+    }
+
+    @Override
+    public void setValue(Object value) {
+        feature = (Attribute) value;
+    }
+
+    @Override
+    public int compareChildNodePointers(NodePointer pointer1, NodePointer pointer2) {
+
+        return 0;
+    }
+
+    @Override
+    public NodeIterator childIterator(NodeTest test, boolean reverse, NodePointer startWith) {
+        if (test instanceof NodeNameTest nodeNameTest) {
+
+            if (!nodeNameTest.isWildcard()) {
+                String localName = nodeNameTest.getNodeName().getName();
+                String nameSpace = nodeNameTest.getNamespaceURI();
+                if (nameSpace == null) nameSpace = getNamespaceResolver().getNamespaceURI("");
+
+                return new AttributeNodeIterator(this, Types.typeName(nameSpace, localName));
+            } else {
+                return new AttributeNodeIterator(this);
+            }
+        }
+
+        if (test instanceof NodeTypeTest nodeTypeTest) {
+            if (nodeTypeTest.getNodeType() == Compiler.NODE_TYPE_NODE) {
+                return new AttributeNodeIterator(this);
+            }
+        }
+
+        return super.childIterator(test, reverse, startWith);
+    }
+
+    @Override
+    public NodeIterator attributeIterator(QName qname) {
+        return new XmlAttributeNodeIterator(
+                this, Types.typeName(getNamespaceResolver().getNamespaceURI(qname.getPrefix()), qname.getName()));
+    }
+}

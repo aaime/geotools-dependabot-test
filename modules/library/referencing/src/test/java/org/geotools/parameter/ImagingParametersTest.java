@@ -1,0 +1,184 @@
+/*
+ *    GeoTools - The Open Source Java GIS Toolkit
+ *    http://geotools.org
+ *
+ *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotools.parameter;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.imagen.ImageN;
+import org.eclipse.imagen.OperationDescriptor;
+import org.eclipse.imagen.OperationRegistry;
+import org.eclipse.imagen.ParameterList;
+import org.eclipse.imagen.RegistryElementDescriptor;
+import org.eclipse.imagen.registry.RenderedRegistryMode;
+import org.geotools.api.parameter.ParameterDescriptor;
+import org.geotools.api.parameter.ParameterValue;
+import org.geotools.api.parameter.ParameterValueGroup;
+import org.geotools.api.util.GenericName;
+import org.geotools.metadata.iso.citation.Citations;
+import org.junit.Test;
+
+/**
+ * Tests the wrapper for JAI's parameters.
+ *
+ * @version $Id$
+ * @author Martin Desruisseaux (IRD)
+ * @author Simone Giannecchini
+ */
+public final class ImagingParametersTest {
+    /** Tests {@link ImagingParameters}. */
+    @Test
+    public void testDescriptors() {
+        final String author = Citations.IMAGEN.getTitle().toString();
+        final String vendor = "org.eclipse.imagen.media";
+        final String mode = RenderedRegistryMode.MODE_NAME;
+        final RegistryElementDescriptor descriptor =
+                ImageN.getDefaultInstance().getOperationRegistry().getDescriptor(mode, "Scale");
+        final ImagingParameterDescriptors parameters = new ImagingParameterDescriptors(descriptor);
+        final GenericName alias = parameters.getAlias().iterator().next();
+        /*
+         * Tests the operation-wide properties.
+         */
+        assertEquals("Name", "Scale", parameters.getName().getCode());
+        assertEquals(
+                "Authority",
+                author,
+                parameters.getName().getAuthority().getTitle().toString());
+        assertEquals("Vendor", vendor, alias.scope().name().toString());
+        assertNotNull("Version", parameters.getName().getVersion());
+        assertLocalized("Vendor", alias.scope().name().toInternationalString());
+        assertLocalized("Remarks", parameters.getRemarks());
+        assertTrue("Remarks", parameters.getRemarks().toString().trim().length() > 0);
+        /*
+         * Tests the properties for a specific parameter in the parameter group.
+         */
+        final ParameterDescriptor param = (ParameterDescriptor) parameters.descriptor("xScale");
+        assertEquals("Name", "Scale", parameters.getName().getCode());
+        assertEquals(
+                "Authority",
+                author,
+                parameters.getName().getAuthority().getTitle().toString());
+        assertEquals("Vendor", vendor, alias.scope().name().toString());
+        assertNotNull("Version", parameters.getName().getVersion());
+        assertLocalized("Vendor", alias.scope().name().toInternationalString());
+        assertLocalized("Remarks", parameters.getRemarks());
+        assertTrue("Remarks", parameters.getRemarks().toString().trim().length() > 0);
+        /*
+         * Tests the properties for a specific parameter in the parameter group.
+         */
+        assertEquals("Name", "xScale", param.getName().getCode());
+        assertEquals("Type", Float.class, param.getValueClass());
+        assertEquals("Default", 1f, param.getDefaultValue());
+        assertEquals("Minimum", 0f, param.getMinimumValue());
+        assertNull("Maximum", param.getMaximumValue());
+        assertNull("Valid values", param.getValidValues());
+        assertLocalized("Remarks", param.getRemarks());
+        assertFalse(parameters
+                .getRemarks()
+                .toString()
+                .trim()
+                .equalsIgnoreCase(param.getRemarks().toString().trim()));
+        /*
+         * Tests parameter values.
+         */
+        final ImagingParameters values = (ImagingParameters) parameters.createValue();
+        for (int i = 0; i < 20; i++) {
+            final ParameterValue before = values.parameter("xScale");
+            if (i % 5 == 0) {
+                values.parameters.setParameter("xScale", (float) i);
+            } else {
+                values.parameter("xScale").setValue((float) i);
+            }
+            assertEquals(
+                    (float) values.parameter("xScale").doubleValue(), values.parameters.getObjectParameter("xScale"));
+            assertSame(before, values.parameter("xScale"));
+        }
+        assertNotNull(values.toString());
+        /*
+         * Tests clone. Requires J2SE 1.5 or above.
+         */
+        final ImagingParameters copy = values.clone();
+        assertNotSame("clone", values, copy);
+        assertNotSame("clone", values.parameters, copy.parameters);
+    }
+
+    /** Ensures that the specified character sequence created from ImageN parameters preserve the localization infos. */
+    private static void assertLocalized(final String name, final CharSequence title) {
+        assertTrue(name, title instanceof ImagingParameterDescription);
+    }
+
+    /** Tests the wrapper with a parameter overriden. */
+    @Test
+    public void testExtensions() {
+        /*
+         * The parameter descriptor for the subsampling.
+         */
+        final ParameterDescriptor SPATIAL_SUBSAMPLING_X = new DefaultParameterDescriptor<>(
+                Citations.OGC,
+                "xPeriod",
+                Double.class, // Value class (mandatory)
+                null, // Array of valid values
+                null, // Default value
+                0.0, // Minimal value
+                null, // Maximal value
+                null, // Unit of measure
+                false); // Parameter is optional
+
+        // Gets the descriptors for extrema  ImageN operation
+        final OperationRegistry registry = ImageN.getDefaultInstance().getOperationRegistry();
+        final OperationDescriptor operation =
+                (OperationDescriptor) registry.getDescriptor(RenderedRegistryMode.MODE_NAME, "Stats");
+
+        // Gets the ImagingParameterDescriptors to replace xPeriod
+        final List<ParameterDescriptor> replacingDescriptors = new ArrayList<>(1);
+        replacingDescriptors.add(SPATIAL_SUBSAMPLING_X);
+        final ImagingParameterDescriptors ripd = new ImagingParameterDescriptors(operation, replacingDescriptors);
+
+        // Sets the parameter we want to override
+        final ParameterValueGroup rip = ripd.createValue();
+        assertSame(ripd, rip.getDescriptor());
+        final ParameterValue p = rip.parameter("xPeriod");
+        assertSame(SPATIAL_SUBSAMPLING_X, p.getDescriptor());
+
+        // Note that we are supposed to use spatial coordinates for this value we are seeting here.
+        p.setValue(Double.valueOf(2.3));
+        assertTrue(p.toString().startsWith("xPeriod = 2.3"));
+
+        // Tests direct access to the parameter list.
+        final ParameterList pl = ((ImagingParameters) rip).parameters;
+        assertSame(pl, pl.setParameter("xPeriod", 2));
+        assertSame(pl, pl.setParameter("yPeriod", 2));
+        assertEquals(2, pl.getIntParameter("xPeriod"));
+        assertEquals(2, pl.getIntParameter("yPeriod"));
+        assertEquals(
+                "Setting 'xPeriod' on ParameterList should have no effect on ParameterValue.",
+                2.3,
+                p.doubleValue(),
+                1E-6);
+        assertEquals(
+                "'yPeriod' should still backed by the ParameterList.",
+                2,
+                rip.parameter("yPeriod").intValue());
+    }
+}

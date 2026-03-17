@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ======================================================================= Maven 
+  Project Configuration File The Geotools Project http://www.geotools.org/ Version: 
+  $Id$ ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                                 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotools</groupId>
+    <artifactId>unsupported</artifactId>
+    <version>35-SNAPSHOT</version>
+  </parent>
+
+  <!-- =========================================================== -->
+  <!-- Module Description -->
+  <!-- =========================================================== -->
+  <groupId>org.geotools</groupId>
+  <artifactId>gt-solr</artifactId>
+  <packaging>jar</packaging>
+  <name>SOLR module</name>
+
+  <description>DataStore supporting the SOLR search platform from the Apache Lucene project</description>
+
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <!-- =========================================================== -->
+  <!-- Developers and Contributors -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <id>aaime</id>
+      <name>Andrea Aime</name>
+      <email>andrea.aime@gmail.com</email>
+      <organization>GEOSOLUTION</organization>
+      <roles>
+        <role>Java Developer</role>
+        <role>Module maintainer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <properties>
+    <solrj.version>8.11.3</solrj.version>
+  </properties>
+  <!-- =========================================================== -->
+  <!-- Dependency Management -->
+  <!-- =========================================================== -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.solr</groupId>
+        <artifactId>solr-solrj</artifactId>
+        <version>${solrj.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-main</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-solrj</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-app-schema</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.activation</groupId>
+      <artifactId>jakarta.activation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-sample-data</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-epsg-hsql</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools.jdbc</groupId>
+      <artifactId>gt-jdbc-postgis</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <configuration>
+          <!-- Disable JUnit specific rules, this module tests extends JUnit3 based OnlineTest -->
+          <rulesets>
+            <ruleset>${geotoolsBaseDir}/build/qa/pmd-ruleset.xml</ruleset>
+          </rulesets>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

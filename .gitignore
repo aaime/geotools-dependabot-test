@@ -1,0 +1,37 @@
+pmd-report.txt
+.pmd
+*.qix
+*.db
+.project
+.classpath
+.settings
+.settings/*
+target
+*.patch
+*.class
+*.pyc
+nb-configuration.xml
+*.*~
+.DS_Store
+*.iml
+.idea/
+workspace
+*.db
+.metadata
+.gradle
+.factorypath
+
+# jenkins relesae build
+/settings.xml
+
+# Microsoft Visual Studio Code
+.vscode/
+_build
+
+# https://bugs.openjdk.java.net/browse/JDK-8214300
+.attach_pid*
+
+# spotless up to date checks
+.spotless-index
+
+.flattened-pom.xml

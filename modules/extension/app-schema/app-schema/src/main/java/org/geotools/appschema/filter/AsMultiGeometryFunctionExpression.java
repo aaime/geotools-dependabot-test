@@ -1,0 +1,94 @@
+/*
+ *    GeoTools - The Open Source Java GIS Toolkit
+ *    http://geotools.org
+ *
+ *    (C) 2007-2011, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+
+package org.geotools.appschema.filter;
+
+import static org.geotools.filter.capability.FunctionNameImpl.parameter;
+
+import org.geotools.api.feature.Attribute;
+import org.geotools.api.filter.capability.FunctionName;
+import org.geotools.filter.FunctionExpressionImpl;
+import org.geotools.filter.capability.FunctionNameImpl;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+
+/**
+ * Function which wraps an instance of geometry in its associatd multi geometry type.
+ *
+ * <p>
+ *
+ * <ul>
+ *   <li>Point -> MultiPoint
+ *   <li>LineString -> MultiLineString
+ *   <li>Polygon -> MultiPolygon
+ * </ul>
+ *
+ * <br>
+ * <br>
+ * This function takes a single argument expression which must evaluate to an instanceof
+ * {@link org.locationtech.jts.geom.Geometry}.
+ *
+ * @author Justin Deoliveira (The Open Planning Project)
+ */
+public class AsMultiGeometryFunctionExpression extends FunctionExpressionImpl {
+
+    public static FunctionName NAME = new FunctionNameImpl(
+            "asMultiGeometry", parameter("multi-geometry", Geometry.class), parameter("geometry", Geometry.class));
+
+    public AsMultiGeometryFunctionExpression() {
+        super(NAME);
+    }
+
+    @Override
+    public Object evaluate(Object obj) {
+        if (!(obj instanceof Attribute)) {
+            return null;
+        }
+        Attribute att = (Attribute) obj;
+        org.geotools.api.filter.expression.Expression arg = getParameters().get(0);
+        Object value = arg.evaluate(att);
+
+        if (value != null) {
+            if (value instanceof Geometry geometry) {
+                if (value instanceof GeometryCollection) {
+                    return value;
+                }
+
+                return wrap(geometry);
+            } else {
+                throw new IllegalArgumentException("function argument did not evaluate to " + Geometry.class);
+            }
+        }
+
+        return null;
+    }
+
+    private GeometryCollection wrap(Geometry geometry) {
+        if (geometry instanceof Point point) {
+            return geometry.getFactory().createMultiPoint(new Point[] {point});
+        } else if (geometry instanceof LineString string) {
+            return geometry.getFactory().createMultiLineString(new LineString[] {string});
+        } else if (geometry instanceof Polygon polygon) {
+            return geometry.getFactory().createMultiPolygon(new Polygon[] {polygon});
+        }
+
+        throw new IllegalArgumentException("Unable to create multi geometry from " + geometry);
+    }
+}

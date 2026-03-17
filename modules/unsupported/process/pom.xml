@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================    
+        Maven Project Configuration File                                        
+                                                                                
+        The Geotools Project                                                    
+            http://www.geotools.org/                                            
+                                                                                
+        Version: $Id$              
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                                  https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotools</groupId>
+    <artifactId>unsupported</artifactId>
+    <version>35-SNAPSHOT</version>
+  </parent>
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotools</groupId>
+  <artifactId>gt-process</artifactId>
+  <packaging>jar</packaging>
+  <name>Process</name>
+
+  <description>An API for creating custom processes/operations plus a
+        collection of pre-written processes including vector/raster
+        conversion.</description>
+
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <id>gdavis</id>
+      <name>Graham Davis</name>
+      <email>gdavis@refractions.net</email>
+      <organization>Refractions Research</organization>
+      <roles>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>mbedward</id>
+      <name>Michael Bedward</name>
+      <email>michael.bedward@gmail.com</email>
+      <roles>
+        <role>Java Developer</role>
+        <role>Module Maintainer</role>
+      </roles>
+      <timezone>+10</timezone>
+    </developer>
+  </developers>
+
+  <!-- =========================================================== -->
+  <!--     Dependency Mangement                                    -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-main</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.imagen</groupId>
+      <artifactId>stats</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-shapefile</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-sample-data</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>

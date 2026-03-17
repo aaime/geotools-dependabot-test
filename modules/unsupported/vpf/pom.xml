@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================    
+        Maven Project Configuration File                                        
+                                                                                
+        The Geotools Project                                                    
+            http://www.geotools.org/                                            
+                                                                                
+        Version: $Id$              
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                                 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotools</groupId>
+    <artifactId>unsupported</artifactId>
+    <version>35-SNAPSHOT</version>
+  </parent>
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotools</groupId>
+  <artifactId>gt-vpf</artifactId>
+  <packaging>jar</packaging>
+  <name>VPF Plugin</name>
+
+  <description>DataStore plugin for VPF format.</description>
+
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <id>jyutzler</id>
+      <name>Jeff Yutzler</name>
+      <email>jeff@ionicenterprise.com</email>
+      <organization>IONIC Enterprise Inc.</organization>
+      <roles>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>knutejoh</id>
+      <name>Knut-Erik Johnsen</name>
+      <email>knuterik@onemap.org</email>
+      <organization>Project OneMap</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>kobit</id>
+      <name>Artur Hefczyc</name>
+      <email>kobit@users.sourceforge.net</email>
+      <organization>CCG</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id></id>
+      <name>John Meagher</name>
+      <email>john.meagher@solipsys.com</email>
+      <organization>Solipsys</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-main</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-epsg-wkt</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-sample-data</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- this dependency is covered by main (via api) and by epsg-wkt -->
+    <!-- because this is confusing to maven we need to give it a clue -->
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-referencing</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>

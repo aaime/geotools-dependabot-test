@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================    
+        Maven Project Configuration File                                        
+                                                                                
+        The Geotools Project                                                    
+            http://www.geotools.org/                                            
+                                                                                
+        Version: $Id: pom.xml 34196 2009-10-22 13:32:49Z groldan $              
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                                 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotools</groupId>
+    <artifactId>geotools</artifactId>
+    <version>35-SNAPSHOT</version>
+  </parent>
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotools</groupId>
+  <artifactId>docs</artifactId>
+  <name>GeoTools Documentation</name>
+  <description>GeoTools website, user and developer guides.</description>
+
+  <licenses>
+    <license>
+      <name>Creative Commons Attribution 3.0 License</name>
+      <url>http://creativecommons.org/licenses/by/3.0/</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <id>jive</id>
+      <name>Jody Garnett</name>
+      <email>jgarnett@gmail.com</email>
+      <organization>Open Source Geospatial Foundation</organization>
+      <roles>
+        <role>Module Maintainer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <properties>
+    <target>full</target>
+    <checkstyle.file>checkstyle-cc0.xml</checkstyle.file>
+    <!-- Disable PMD in this module, the code is a set of examples, too many System.out -->
+    <pmd.skip>true</pmd.skip>
+  </properties>
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencyManagement>
+    <dependencies>
+      <!-- Import the GeoTools platform-dependencies BOM to get consistent dependency versions -->
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-platform-dependencies</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Import the GeoTools BOM to get consistent dependency versions -->
+      <dependency>
+        <groupId>org.geotools</groupId>
+        <artifactId>gt-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-main</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-cql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-render</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-shapefile</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-property</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools.jdbc</groupId>
+      <artifactId>gt-jdbc-postgis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-wfs-ng</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-geotiff</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-image</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-imagemosaic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-epsg-hsql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-wms</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-wmts</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools.xsd</groupId>
+      <artifactId>gt-xsd-filter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools.xsd</groupId>
+      <artifactId>gt-xsd-kml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools.xsd</groupId>
+      <artifactId>gt-xsd-sld</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-brewer</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-graph</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-swing</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-process</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-process-feature</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-process-geometry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-process-raster</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-grid</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-sample-data</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-tile-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-svggen</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-codec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-awt-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.javacsv</groupId>
+      <artifactId>javacsv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.imagen</groupId>
+      <artifactId>imagen-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.12</version>
+          </dependency>
+          <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+            <version>1.0b3</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>sphinx</id>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>compile</phase>
+            <configuration>
+              <tasks>
+                <ant antfile="build.xml" dir="${basedir}" target="${target}">
+                  <property name="build.directory" value="${project.build.directory}"></property>
+                  <property name="project.version" value="${project.version}"></property>
+                </ant>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <!-- do not deploy tutorial examples -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>index</id>
+      <properties>
+        <target>index</target>
+      </properties>
+    </profile>
+    <profile>
+      <id>user</id>
+      <properties>
+        <target>user</target>
+      </properties>
+    </profile>
+    <profile>
+      <id>web</id>
+      <properties>
+        <target>web</target>
+      </properties>
+    </profile>
+    <profile>
+      <id>developer</id>
+      <properties>
+        <target>developer</target>
+      </properties>
+    </profile>
+    <profile>
+      <id>checkstyle</id>
+      <activation>
+        <property>
+          <name>qa</name>
+        </property>
+      </activation>
+    </profile>
+  </profiles>
+
+</project>

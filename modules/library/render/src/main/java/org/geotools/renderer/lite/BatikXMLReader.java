@@ -1,0 +1,124 @@
+/*
+ *    GeoTools - The Open Source Java GIS Toolkit
+ *    http://geotools.org
+ *
+ *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotools.renderer.lite;
+
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.DTDHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.XMLReader;
+
+/**
+ * A wrapper that forwards any request to the default JAXP xml reader.
+ *
+ * <p>By default Batik wants Xerces, but we want to avoid the dependency since a SAX2 parser is already included in the
+ * jre.
+ *
+ * <p>This class is needed because Batik wants the name of a class that implements XMLReader and has a public default
+ * constructor, and default jre parsers do not have it.
+ *
+ * @author wolf
+ * @since 2.2.1
+ */
+public class BatikXMLReader implements XMLReader {
+    XMLReader reader;
+
+    public BatikXMLReader() throws ParserConfigurationException, SAXException {
+        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+        parserFactory.setNamespaceAware(true);
+        SAXParser parser = parserFactory.newSAXParser();
+        reader = parser.getXMLReader();
+    }
+
+    @Override
+    public ContentHandler getContentHandler() {
+        return reader.getContentHandler();
+    }
+
+    @Override
+    public DTDHandler getDTDHandler() {
+        return reader.getDTDHandler();
+    }
+
+    @Override
+    public EntityResolver getEntityResolver() {
+        return reader.getEntityResolver();
+    }
+
+    @Override
+    public ErrorHandler getErrorHandler() {
+        return reader.getErrorHandler();
+    }
+
+    @Override
+    public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+        return reader.getFeature(name);
+    }
+
+    @Override
+    public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+        return reader.getProperty(name);
+    }
+
+    @Override
+    public void parse(InputSource input) throws IOException, SAXException {
+        reader.parse(input);
+    }
+
+    @Override
+    public void parse(String systemId) throws IOException, SAXException {
+        reader.parse(systemId);
+    }
+
+    @Override
+    public void setContentHandler(ContentHandler handler) {
+        reader.setContentHandler(handler);
+    }
+
+    @Override
+    public void setDTDHandler(DTDHandler handler) {
+        reader.setDTDHandler(handler);
+    }
+
+    @Override
+    public void setEntityResolver(EntityResolver resolver) {
+        reader.setEntityResolver(resolver);
+    }
+
+    @Override
+    public void setErrorHandler(ErrorHandler handler) {
+        reader.setErrorHandler(handler);
+    }
+
+    @Override
+    public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
+        reader.setFeature(name, value);
+    }
+
+    @Override
+    public void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException {
+        reader.setProperty(name, value);
+    }
+}

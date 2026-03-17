@@ -1,0 +1,159 @@
+/*
+ *    GeoTools - The Open Source Java GIS Toolkit
+ *    http://geotools.org
+ *
+ *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotools.data.oracle;
+
+import java.sql.Date;
+import org.geotools.api.data.SimpleFeatureSource;
+import org.geotools.api.data.SimpleFeatureStore;
+import org.geotools.api.data.Transaction;
+import org.geotools.api.feature.simple.SimpleFeature;
+import org.geotools.api.feature.simple.SimpleFeatureType;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.data.DataUtilities;
+import org.geotools.data.DefaultTransaction;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.jdbc.JDBCDataStoreOnlineTest;
+import org.geotools.jdbc.JDBCTestSetup;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.junit.Test;
+import org.locationtech.jts.geom.Geometry;
+
+public class OracleDataStoreOnlineTest extends JDBCDataStoreOnlineTest {
+
+    private OracleTestSetup oracleTestSetup;
+
+    @Override
+    protected JDBCTestSetup createTestSetup() {
+        oracleTestSetup = new OracleTestSetup();
+        return oracleTestSetup;
+    }
+
+    @Test
+    public void testCreateSchemaOSGBCrs() throws Exception {
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName(tname("ft2"));
+        builder.setNamespaceURI(dataStore.getNamespaceURI());
+        CoordinateReferenceSystem crs = CRS.decode("EPSG:27700");
+        builder.setCRS(crs);
+        builder.add(aname("geometry"), Geometry.class);
+        builder.add(aname("intProperty"), Integer.class);
+        builder.add(aname("dateProperty"), Date.class);
+
+        SimpleFeatureType featureType = builder.buildFeatureType();
+        // used to fail here - with index creation error
+        dataStore.createSchema(featureType);
+    }
+
+    @Test
+    public void testCreateSchemaWktCrs() throws Exception {
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName(tname("ft2"));
+        builder.setNamespaceURI(dataStore.getNamespaceURI());
+        CoordinateReferenceSystem crs = CRS.parseWKT(
+                """
+                GEOGCS["NAD83",\s
+                  DATUM["North American Datum 1983",\s
+                    SPHEROID["GRS 1980", 6378137.0, 298.257222101, AUTHORITY["EPSG","7019"]],\s
+                    TOWGS84[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],\s
+                    AUTHORITY["EPSG","6269"]],\s
+                  PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]],\s
+                  UNIT["degree", 0.017453292519943295],\s
+                  AXIS["Geodetic longitude", EAST],\s
+                  AXIS["Geodetic latitude", NORTH],\s
+                  AUTHORITY["EPSG","4269"]]""");
+        builder.setCRS(crs);
+        builder.add(aname("geometry"), Geometry.class);
+        builder.add(aname("intProperty"), Integer.class);
+        builder.add(aname("dateProperty"), Date.class);
+
+        SimpleFeatureType featureType = builder.buildFeatureType();
+        // used to fail here
+        dataStore.createSchema(featureType);
+    }
+
+    @Test
+    public void testCreateSpatialIndexNameTooLong() throws Exception {
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName(tname("ft2"));
+        builder.setNamespaceURI(dataStore.getNamespaceURI());
+        builder.setCRS(DefaultGeographicCRS.WGS84);
+        builder.add(aname("geometry_one_two_three_four"), Geometry.class);
+        builder.add(aname("intProperty"), Integer.class);
+        builder.add(aname("dateProperty"), Date.class);
+
+        SimpleFeatureType featureType = builder.buildFeatureType();
+        // used to fail here
+        dataStore.createSchema(featureType);
+    }
+
+    @SuppressWarnings("PMD.UseTryWithResources") // need transaction in catch for rollback
+    @Test
+    public void testCreateLongVarChar() throws Exception {
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName(tname("longvar"));
+        builder.setNamespaceURI(dataStore.getNamespaceURI());
+        builder.setCRS(DefaultGeographicCRS.WGS84);
+        builder.add(aname("geometry_one_two_three_four"), Geometry.class);
+        builder.add(aname("longvar"), String.class);
+
+        SimpleFeatureType featureType = builder.buildFeatureType();
+
+        dataStore.createSchema(featureType);
+        SimpleFeatureBuilder fBuilder = new SimpleFeatureBuilder(featureType);
+        fBuilder.add(null);
+        StringBuffer vBuffer = new StringBuffer(4000);
+        // to be honest I can't tell from the oracle docs if 4000 or 3999 is the
+        // actual limit but anything over 255 used to fail
+        for (int i = 0; i < 3999; i++) {
+            vBuffer.append("x");
+        }
+
+        fBuilder.add(vBuffer.toString());
+        SimpleFeature f = fBuilder.buildFeature(null);
+        // used to fail here
+        // need the transaction available for rollback in the catch
+        @SuppressWarnings("PMD.CloseResource")
+        Transaction transaction = new DefaultTransaction("create");
+        SimpleFeatureSource featureSource =
+                dataStore.getFeatureSource(featureType.getName().getLocalPart());
+        SimpleFeatureCollection collection = DataUtilities.collection(f);
+        SimpleFeatureStore outStore = (SimpleFeatureStore) featureSource;
+        outStore.setTransaction(transaction);
+
+        try {
+            outStore.addFeatures(collection);
+
+            transaction.commit();
+        } catch (Exception problem) {
+            java.util.logging.Logger.getGlobal().log(java.util.logging.Level.INFO, "", problem);
+            transaction.rollback();
+        } finally {
+            transaction.close();
+            dataStore.removeSchema(tname("longvar"));
+        }
+    }
+
+    @Override
+    protected void tearDownInternal() throws Exception {
+
+        super.tearDownInternal();
+        oracleTestSetup.deleteSpatialTable(tname("longvar"));
+    }
+}
