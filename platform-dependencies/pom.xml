@@ -95,7 +95,7 @@
     <tech-units-indriya.version>2.2</tech-units-indriya.version>
     <uber-h3.version>3.7.3</uber-h3.version>
     <velocity.version>1.4</velocity.version>
-    <wkb4j.version>1.0-RC1</wkb4j.version>
+    <wkb4j.version>1.0-RC1-modified</wkb4j.version>
     <xml-commons-resolver.version>1.2</xml-commons-resolver.version>
   </properties>
 
