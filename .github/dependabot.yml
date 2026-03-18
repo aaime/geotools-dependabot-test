@@ -10,15 +10,21 @@ updates:
       time: "05:01"
       timezone: "Europe/Rome"
     open-pull-requests-limit: 20
-    labels:
-      - "dependencies"
-      - "java"
-      - "dependabot"
     commit-message:
-      prefix: "chore(deps)"
+      prefix: "chore"
       include: "scope"
     pull-request-branch-name:
       separator: "-"
+    allow:
+      # For now just covering dependencies, we'll expand to test and maven plugins later 
+      - dependency-type: "production"
+    ignore:
+      - dependency-name: "org.apache.maven.plugins:*"
+      - dependency-name: "org.codehaus.mojo:*"
+      - dependency-name: "org.owasp:dependency-check-maven"
+      - dependency-name: "org.junit:*"
+      - dependency-name: "org.mockito:*"
+      - dependency-name: "org.hamcrest:*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -28,10 +34,6 @@ updates:
       time: "05:15"
       timezone: "Europe/Rome"
     open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "github-actions"
-      - "dependabot"
     commit-message:
       prefix: "chore(ci)"
     pull-request-branch-name:
