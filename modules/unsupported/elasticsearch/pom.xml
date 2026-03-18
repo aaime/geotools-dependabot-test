@@ -46,7 +46,7 @@
     <!-- To run the latest check out https://www.docker.elastic.co/r/elasticsearch/elasticsearch -->
     <elasticsearch.version>9.3.0</elasticsearch.version>
     <spatial4j.version>0.8</spatial4j.version>
-    <geo.version>0.7.7</geo.version>
+    <geo.version>0.8.1</geo.version>
   </properties>
   <dependencyManagement>
     <dependencies>
