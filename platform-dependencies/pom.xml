@@ -32,7 +32,7 @@
     <conversantmedia-disruptor.version>1.2.15</conversantmedia-disruptor.version>
     <db2.jdbc.version>12.1.0.0</db2.jdbc.version>
     <eastwood.version>1.1.1-20090908</eastwood.version>
-    <eclipse.emf.version>2.15.0</eclipse.emf.version>
+    <eclipse.emf.version>2.40.0</eclipse.emf.version>
     <eclipse.xsd.version>2.12.0</eclipse.xsd.version>
     <ejml-ddense.version>0.41</ejml-ddense.version>
     <geodb.version>0.9</geodb.version>
